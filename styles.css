@@ -84,11 +84,19 @@ nav {
 }
 
 .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    transition: opacity var(--transition-fast);
+    color: inherit;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logo-img {
+    width: 40px;   /* Ajusta el tamaño */
+    height: 40px;
+    object-fit: contain;
 }
 
 .logo:hover {
