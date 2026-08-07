@@ -74,9 +74,9 @@
         const products = [
             { 
                 id: 1, 
-                name: 'Sticker Loro Colorido', 
+                name: 'Sticker Zorro', 
                 category: 'animales', 
-                price: 2.99, 
+                price: 500, 
                 image: 'zorro.png'
             },
             { 
@@ -185,7 +185,9 @@
 
             productsGrid.innerHTML = filteredProducts.map(product => `
                 <div class="product-card">
-                    <div class="product-image">${product.emoji}</div>
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
                         <div class="product-description">Diseño exclusivo</div>
