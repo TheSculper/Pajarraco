@@ -94,8 +94,8 @@ nav {
 }
 
 .logo-img {
-    width: 40px;   /* Ajusta el tamaño */
-    height: 40px;
+    width: 80px;   /* Ajusta el tamaño */
+    height: 80px;
     object-fit: contain;
 }
 
