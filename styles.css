@@ -109,6 +109,34 @@ nav {
     gap: 2.5rem;
 }
 
+.instagram-btn {
+    display: inline-flex;
+    align-items: center;
+    /* Use site primary color to match the page */
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 20px;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.instagram-btn svg { display: block; width:20px; height:20px; }
+
+.instagram-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.95;
+}
+
+.instagram-btn:focus {
+    outline: 3px solid rgba(188, 195, 153, 0.25); /* subtle focus using primary tone */
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Hide instagram button on very small screens to preserve layout */
+@media (max-width: 480px) {
+    .instagram-btn { display: none; }
+}
+
 .currency-selector {
     padding: 0.6rem 0.8rem;
     border: 2px solid var(--color-primary);
