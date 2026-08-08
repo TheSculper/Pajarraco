@@ -40,7 +40,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 PajarraCO - Tienda de Stickers. Todos los derechos reservados. Cony y Robert</p>
+        <p>&copy; 2026 PajarraCO - Tienda de Stickers. Todos los derechos reservados. Cony y Robert. </p>
     </footer>
 
     <!-- Modal del Carrito -->
@@ -320,7 +320,7 @@
         // Actualizar totales
         function updateCartTotals() {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const shipping = cart.length > 0 ? 5.00 : 0;
+            const shipping = cart.length > 0 ? 500 : 0;
             const total = subtotal + shipping;
 
             document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
@@ -332,7 +332,7 @@
         function checkout() {
             if (cart.length === 0) return;
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 5.00;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 500;
             const items = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
 
             alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: $${total.toFixed(2)}\n\nEste es un carrito de demostración.`);
