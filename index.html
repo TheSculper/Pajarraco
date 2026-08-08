@@ -202,6 +202,16 @@
             return Math.round(price * exchangeRate[currentCurrency]);
         }
 
+        // Función para formatear precios con o sin decimales según la moneda
+        function formatPrice(price) {
+            const converted = convertPrice(price);
+            if (currentCurrency === 'clp') {
+                return converted.toString();
+            } else {
+                return converted.toFixed(2);
+            }
+        }
+
         // Renderizar productos
         function renderProducts() {
             const filteredProducts = currentFilter === 'all' 
@@ -217,7 +227,7 @@
                         <div class="product-name">${product.name}</div>
                         <div class="product-description">Diseño exclusivo</div>
                         <div class="product-footer">
-                            <span class="price">${getCurrencySymbol()}${convertPrice(product.price).toFixed(2)}</span>
+                            <span class="price">${getCurrencySymbol()}${formatPrice(product.price)}</span>
                             <button class="add-to-cart-btn" onclick="addToCart(${product.id})">Añadir</button>
                         </div>
                     </div>
@@ -316,7 +326,7 @@
                 <div class="cart-item">
                     <div class="cart-item-info">
                         <div class="cart-item-name">${item.emoji} ${item.name}</div>
-                        <div class="cart-item-price">${getCurrencySymbol()}${convertPrice(item.price).toFixed(2)}</div>
+                        <div class="cart-item-price">${getCurrencySymbol()}${formatPrice(item.price)}</div>
                         <div class="cart-item-quantity">
                             <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
                             <span>${item.quantity}</span>
@@ -357,9 +367,15 @@
             const shipping = cart.length > 0 ? convertPrice(500) : 0;
             const total = subtotal + shipping;
 
-            document.getElementById('subtotal').textContent = `${getCurrencySymbol()}${subtotal.toFixed(2)}`;
-            document.getElementById('shipping').textContent = `${getCurrencySymbol()}${shipping.toFixed(2)}`;
-            document.getElementById('total').textContent = `${getCurrencySymbol()}${total.toFixed(2)}`;
+            if (currentCurrency === 'clp') {
+                document.getElementById('subtotal').textContent = `${getCurrencySymbol()}${subtotal}`;
+                document.getElementById('shipping').textContent = `${getCurrencySymbol()}${shipping}`;
+                document.getElementById('total').textContent = `${getCurrencySymbol()}${total}`;
+            } else {
+                document.getElementById('subtotal').textContent = `${getCurrencySymbol()}${subtotal.toFixed(2)}`;
+                document.getElementById('shipping').textContent = `${getCurrencySymbol()}${shipping.toFixed(2)}`;
+                document.getElementById('total').textContent = `${getCurrencySymbol()}${total.toFixed(2)}`;
+            }
         }
 
         // Finalizar compra
@@ -370,7 +386,8 @@
             const total = subtotal + convertPrice(500);
             const items = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
 
-            alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: ${getCurrencySymbol()}${total.toFixed(2)}\n\nEste es un carrito de demostración.`);
+            let totalText = currentCurrency === 'clp' ? total : total.toFixed(2);
+            alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: ${getCurrencySymbol()}${totalText}\n\nEste es un carrito de demostración.`);
             
             cart = [];
             saveCartToStorage();
