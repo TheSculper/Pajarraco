@@ -208,12 +208,23 @@ main {
 
 /* --- Hero -------------------------------------------------------------------- */
 .hero {
-    background: var(--color-white);
+    background-image: url("header-pajarraco.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
     border-radius: var(--radius-lg);
-    padding: 3rem 2rem;
+    padding: 4.5rem 2rem;
     text-align: center;
     margin-bottom: 3rem;
     box-shadow: var(--shadow-md);
+
+    min-height: 280px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .hero h1 {
