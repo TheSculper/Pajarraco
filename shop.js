@@ -54,6 +54,14 @@ class PajarracoShop {
     }
 
     /**
+     * Formatear precio según la moneda
+     */
+    formatPrice(price) {
+        const decimals = this.currency.name === 'CLP' ? 0 : 2;
+        return price.toFixed(decimals);
+    }
+
+    /**
      * Renderizar productos
      */
     renderProducts() {
@@ -73,7 +81,7 @@ class PajarracoShop {
                     <div class="product-name">${product.name}</div>
                     <div class="product-description">Diseño exclusivo</div>
                     <div class="product-footer">
-                        <span class="price">${this.currency.symbol}${product.price.toFixed(2)}</span>
+                        <span class="price">${this.currency.symbol}${this.formatPrice(product.price)}</span>
                         <button class="add-to-cart-btn" data-id="${product.id}">Añadir</button>
                     </div>
                 </div>
@@ -167,7 +175,7 @@ class PajarracoShop {
             <div class="cart-item">
                 <div class="cart-item-info">
                     <div class="cart-item-name">${item.emoji || ''} ${item.name}</div>
-                    <div class="cart-item-price">${this.currency.symbol}${item.price.toFixed(2)}</div>
+                    <div class="cart-item-price">${this.currency.symbol}${this.formatPrice(item.price)}</div>
                     <div class="cart-item-quantity">
                         <button class="quantity-btn" data-index="${index}" data-action="decrease">-</button>
                         <span>${item.quantity}</span>
@@ -233,9 +241,9 @@ class PajarracoShop {
         const shipping = this.cart.length > 0 ? this.currency.shippingCost : 0;
         const total = subtotal + shipping;
 
-        document.getElementById('subtotal').textContent = `${this.currency.symbol}${subtotal.toFixed(2)}`;
-        document.getElementById('shipping').textContent = `${this.currency.symbol}${shipping.toFixed(2)}`;
-        document.getElementById('total').textContent = `${this.currency.symbol}${total.toFixed(2)}`;
+        document.getElementById('subtotal').textContent = `${this.currency.symbol}${this.formatPrice(subtotal)}`;
+        document.getElementById('shipping').textContent = `${this.currency.symbol}${this.formatPrice(shipping)}`;
+        document.getElementById('total').textContent = `${this.currency.symbol}${this.formatPrice(total)}`;
     }
 
     /**
@@ -247,7 +255,7 @@ class PajarracoShop {
         const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + this.currency.shippingCost;
         const items = this.cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
 
-        alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: ${this.currency.symbol}${total.toFixed(2)}\n\nEste es un carrito de demostración.`);
+        alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: ${this.currency.symbol}${this.formatPrice(total)}\n\nEste es un carrito de demostración.`);
         
         this.cart = [];
         this.saveCartToStorage();
