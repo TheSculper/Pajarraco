@@ -106,7 +106,7 @@ nav {
 .nav-right {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2.5rem;
 }
 
 .currency-selector {
@@ -495,7 +495,7 @@ footer {
     }
 
     .nav-right {
-        gap: 1rem;
+        gap: 1.5rem;
     }
 
     .currency-selector {
