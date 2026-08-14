@@ -250,19 +250,36 @@ class PajarracoShop {
      * Finalizar compra
      */
     checkout() {
-        if (this.cart.length === 0) return;
+    if (this.cart.length === 0) return;
 
-        const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + this.currency.shippingCost;
-        const items = this.cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
+    // 1. Calcular el total
+    const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + this.currency.shippingCost;
 
-        alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: ${this.currency.symbol}${this.formatPrice(total)}\n\nEste es un carrito de demostración.`);
-        
-        this.cart = [];
-        this.saveCartToStorage();
-        this.updateCartCount();
-        this.closeCart();
-        this.renderCart();
-    }
+    // 2. Armar el texto del mensaje con formato amigable
+    let mensaje = "¡Hola Cony y Robert! 🐦 Me gustaría hacer el siguiente pedido en PajarraCO:%0A%0A";
+    
+    this.cart.forEach(item => {
+        mensaje += `▪️ ${item.quantity}x ${item.name} (${this.currency.symbol}${this.formatPrice(item.price)})%0A`;
+    });
+    
+    mensaje += `%0A📦 *Envío:* ${this.currency.symbol}${this.formatPrice(this.currency.shippingCost)}%0A`;
+    mensaje += `💰 *Total a pagar:* ${this.currency.symbol}${this.formatPrice(total)}%0A%0A`;
+    mensaje += `Por favor indíquenme los datos de transferencia. ¡Gracias!`;
+
+    // 3. Configurar tu número de teléfono (Reemplaza las X con tu número real, incluyendo el 56 de Chile)
+    const telefonoPajarraco = "569XXXXXXXX"; 
+    const urlWhatsApp = `https://wa.me/${telefonoPajarraco}?text=${mensaje}`;
+
+    // 4. Vaciar el carrito y cerrar el modal
+    this.cart = [];
+    this.saveCartToStorage();
+    this.updateCartCount();
+    this.closeCart();
+    this.renderCart();
+
+    // 5. Abrir WhatsApp en una nueva pestaña
+    window.open(urlWhatsApp, '_blank');
+}
 
     /**
      * Guardar carrito en localStorage
