@@ -497,6 +497,13 @@ main {
     transition: background var(--transition-base);
 }
 
+.checkout-note {
+    margin-top: 1.5rem;
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
 .checkout-btn:hover {
     background: var(--color-primary-dark);
 }
