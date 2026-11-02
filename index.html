@@ -48,6 +48,35 @@
         <div class="products-grid" id="productsGrid">
             <!-- Los productos se cargarán aquí con JavaScript -->
         </div>
+
+        <section class="store-info" aria-labelledby="storeInfoTitle">
+            <h2 id="storeInfoTitle">Entrega y compra</h2>
+            <div class="store-info-grid">
+                <article>
+                    <h3>Retiro y entregas gratuitas</h3>
+                    <ul>
+                        <li>Retiro en Pacem in Terris 1783, Vitacura.</li>
+                        <li>Punto de encuentro cercano a Vitacura.</li>
+                        <li>Metro Conchalí.</li>
+                        <li>Cerca del Campus San Joaquín.</li>
+                    </ul>
+                    <p>La fecha y el horario se coordinan por WhatsApp.</p>
+                </article>
+                <article>
+                    <h3>Despachos a otras zonas</h3>
+                    <p>Podemos coordinar Starken, Chilexpress u otro medio. El costo se cotiza según el servicio y se confirma contigo por WhatsApp antes de cerrar el pedido.</p>
+                </article>
+                <article>
+                    <h3>Disponibilidad y pago</h3>
+                    <p>Hay stock disponible y los pedidos se preparan de inmediato. El pago se coordina por transferencia; la página no procesa pagos automáticos.</p>
+                    <p><a href="https://wa.me/56975297791">Consulta por WhatsApp</a></p>
+                </article>
+                <article>
+                    <h3>Cambios y devoluciones</h3>
+                    <p>No se aceptan devoluciones por cambio de opinión. Si tu pedido llega con una falla, contáctanos por WhatsApp para revisar el caso. Se mantienen los derechos que correspondan según la ley vigente.</p>
+                </article>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -76,8 +105,30 @@
                     <span id="total">$0</span>
                 </div>
             </div>
+            <div class="checkout-fields">
+                <label for="customerName">Nombre y apellido</label>
+                <input id="customerName" type="text" autocomplete="name" maxlength="100" required>
+
+                <label for="deliveryMethod">¿Cómo prefieres recibir tu pedido?</label>
+                <select id="deliveryMethod" required>
+                    <option value="">Elige una opción</option>
+                    <option value="pickup">Retiro gratuito en Pacem in Terris 1783, Vitacura</option>
+                    <option value="vitacura">Entrega gratuita en un punto cercano a Vitacura</option>
+                    <option value="conchali">Entrega gratuita en Metro Conchalí</option>
+                    <option value="san-joaquin">Entrega gratuita cerca del Campus San Joaquín</option>
+                    <option value="courier">Despacho por Starken, Chilexpress u otro (costo por cotizar)</option>
+                </select>
+
+                <div id="courierAddressGroup" hidden>
+                    <label for="courierAddress">Comuna y dirección de destino</label>
+                    <textarea id="courierAddress" rows="2" maxlength="240" autocomplete="street-address"></textarea>
+                </div>
+
+                <label for="deliveryNotes">Preferencia de horario o indicaciones (opcional)</label>
+                <textarea id="deliveryNotes" rows="2" maxlength="300"></textarea>
+            </div>
             <p class="checkout-note">El pedido se envía por WhatsApp. El pago se coordina por transferencia; este sitio no procesa pagos automáticos.</p>
-            <button class="checkout-btn" id="checkoutBtn">Pedir por WhatsApp</button>
+            <button class="checkout-btn" id="checkoutBtn" type="button">Pedir por WhatsApp</button>
         </div>
     </div>
 
@@ -210,6 +261,11 @@
         const checkoutBtn = document.getElementById('checkoutBtn');
         const filterBtns = document.querySelectorAll('.filter-btn');
         const currencySelect = document.getElementById('currencySelect');
+        const customerNameInput = document.getElementById('customerName');
+        const deliveryMethodSelect = document.getElementById('deliveryMethod');
+        const courierAddressGroup = document.getElementById('courierAddressGroup');
+        const courierAddressInput = document.getElementById('courierAddress');
+        const deliveryNotesInput = document.getElementById('deliveryNotes');
 
         // Inicializar la página
         function init() {
@@ -289,7 +345,14 @@
                 }
             });
 
+            deliveryMethodSelect.addEventListener('change', () => {
+                updateDeliveryFields();
+                updateCartTotals();
+            });
+
+            courierAddressInput.addEventListener('input', () => courierAddressInput.setCustomValidity(''));
             checkoutBtn.addEventListener('click', checkout);
+            updateDeliveryFields();
         }
 
         // Agregar al carrito
@@ -392,42 +455,79 @@
         // Actualizar totales
         function updateCartTotals() {
             const subtotal = cart.reduce((sum, item) => sum + (convertPrice(item.price) * item.quantity), 0);
-            const shipping = cart.length > 0 ? convertPrice(500) : 0;
-            const total = subtotal + shipping;
+            const deliveryMethod = deliveryMethodSelect.value;
+            const freeDelivery = ['pickup', 'vitacura', 'conchali', 'san-joaquin'].includes(deliveryMethod);
+            const shippingText = !cart.length
+                ? `${getCurrencySymbol()}0`
+                : freeDelivery
+                    ? `${getCurrencySymbol()}0`
+                    : deliveryMethod === 'courier'
+                        ? 'Por cotizar'
+                        : 'A coordinar';
+            const totalText = !cart.length
+                ? `${getCurrencySymbol()}0`
+                : freeDelivery
+                    ? `${getCurrencySymbol()}${currentCurrency === 'clp' ? subtotal : subtotal.toFixed(2)}`
+                    : 'Por confirmar';
 
             if (currentCurrency === 'clp') {
                 document.getElementById('subtotal').textContent = `${getCurrencySymbol()}${subtotal}`;
-                document.getElementById('shipping').textContent = `${getCurrencySymbol()}${shipping}`;
-                document.getElementById('total').textContent = `${getCurrencySymbol()}${total}`;
             } else {
                 document.getElementById('subtotal').textContent = `${getCurrencySymbol()}${subtotal.toFixed(2)}`;
-                document.getElementById('shipping').textContent = `${getCurrencySymbol()}${shipping.toFixed(2)}`;
-                document.getElementById('total').textContent = `${getCurrencySymbol()}${total.toFixed(2)}`;
             }
+            document.getElementById('shipping').textContent = shippingText;
+            document.getElementById('total').textContent = totalText;
+        }
+
+        function updateDeliveryFields() {
+            const isCourier = deliveryMethodSelect.value === 'courier';
+            courierAddressGroup.hidden = !isCourier;
+            courierAddressInput.required = isCourier;
+            if (!isCourier) courierAddressInput.setCustomValidity('');
         }
 
         // Finalizar compra
         function checkout() {
             if (cart.length === 0) return;
 
+            customerNameInput.setCustomValidity(customerNameInput.value.trim() ? '' : 'Ingresa tu nombre y apellido.');
+            if (!customerNameInput.reportValidity() || !deliveryMethodSelect.reportValidity()) return;
+
+            const deliveryMethod = deliveryMethodSelect.value;
+            const isCourier = deliveryMethod === 'courier';
+            if (isCourier) {
+                courierAddressInput.setCustomValidity(courierAddressInput.value.trim() ? '' : 'Ingresa la comuna y dirección de destino.');
+                if (!courierAddressInput.reportValidity()) return;
+            }
+
             const subtotal = cart.reduce((sum, item) => sum + (convertPrice(item.price) * item.quantity), 0);
-            const total = subtotal + convertPrice(500);
-            const totalText = currentCurrency === 'clp' ? total.toString() : total.toFixed(2);
+            const totalText = currentCurrency === 'clp' ? subtotal.toString() : subtotal.toFixed(2);
+            const deliveryLabel = deliveryMethodSelect.options[deliveryMethodSelect.selectedIndex].textContent;
             const message = [
                 '¡Hola Cony y Robert! 🐦 Me gustaría hacer el siguiente pedido en PajarraCO:',
+                `Nombre: ${customerNameInput.value.trim()}`,
                 '',
                 ...cart.map(item =>
                     `▪️ ${item.quantity}x ${item.name} (${getCurrencySymbol()}${formatPrice(item.price)} c/u)`
                 ),
                 '',
-                `📦 Envío: ${getCurrencySymbol()}${formatPrice(convertPrice(500))}`,
-                `💰 Total a pagar: ${getCurrencySymbol()}${totalText}`,
+                `📦 Entrega: ${deliveryLabel}`,
+                ...(isCourier ? [`Dirección: ${courierAddressInput.value.trim()}`] : []),
+                ...(deliveryNotesInput.value.trim() ? [`Indicaciones: ${deliveryNotesInput.value.trim()}`] : []),
+                ...(isCourier
+                    ? ['Costo de envío: por cotizar.', `Subtotal de productos: ${getCurrencySymbol()}${totalText}`, 'El total final se confirma después de cotizar el envío.']
+                    : [`Envío: ${getCurrencySymbol()}0 (gratuito)`, `Total: ${getCurrencySymbol()}${totalText}`]),
                 '',
                 'Quisiera coordinar el pago por transferencia. Por favor, envíenme los datos para pagar. ¡Gracias!'
             ].join('\n');
 
             if (!openWhatsAppOrder(message)) return;
 
+            customerNameInput.value = '';
+            deliveryMethodSelect.value = '';
+            courierAddressInput.value = '';
+            deliveryNotesInput.value = '';
+            updateDeliveryFields();
             cart = [];
             saveCartToStorage();
             updateCartCount();
