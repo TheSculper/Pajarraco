@@ -208,7 +208,7 @@ main {
 
 /* --- Hero -------------------------------------------------------------------- */
 .hero {
-    background-image: url("header-pajarraco.png");
+    background-image: url("assets/images/header-pajarraco.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
