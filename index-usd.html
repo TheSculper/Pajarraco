@@ -10,7 +10,7 @@
     <header>
         <nav>
             <a href="#" class="logo">
-                <img src="logos.png" alt="Logo Pajarraco" class="logo-img">
+                <img src="assets/images/logos.png" alt="Logo Pajarraco" class="logo-img">
                 PajarraCO
             </a>
             <div class="currency-nav">
@@ -47,7 +47,6 @@
         <p>&copy; 2026 PajarraCO - Tienda de Stickers. Todos los derechos reservados. Cony y Robert</p>
     </footer>
 
-    <!-- Modal del Carrito -->
     <div class="modal" id="cartModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -75,7 +74,6 @@
 
     <script src="shop.js"></script>
     <script>
-        // Configuración específica para USD
         const CURRENCY = {
             symbol: '$',
             name: 'USD',
@@ -84,93 +82,20 @@
         };
 
         const PRODUCTS_USD = [
-            { 
-                id: 1, 
-                name: 'Sticker Zorro', 
-                category: 'animales', 
-                price: 5.00, 
-                image: 'zorro.png'
-            },
-            { 
-                id: 2, 
-                name: 'Sticker tocó apechugar', 
-                category: 'animales', 
-                price: 5.00, 
-                image: 'apechugar.png'
-            },
-            { 
-                id: 3, 
-                name: 'Sticker Código', 
-                category: 'tech', 
-                price: 2.99, 
-                emoji: '💻'
-            },
-            { 
-                id: 4, 
-                name: 'Sticker Pizza', 
-                category: 'comida', 
-                price: 1.99, 
-                emoji: '🍕'
-            },
-            { 
-                id: 5, 
-                name: 'Sticker Gato', 
-                category: 'animales', 
-                price: 2.49, 
-                emoji: '🐱'
-            },
-            { 
-                id: 6, 
-                name: 'Sticker Mapa Mundi', 
-                category: 'viajes', 
-                price: 3.49, 
-                emoji: '🗺️'
-            },
-            { 
-                id: 7, 
-                name: 'Sticker Robot', 
-                category: 'tech', 
-                price: 3.99, 
-                emoji: '🤖'
-            },
-            { 
-                id: 8, 
-                name: 'Sticker Helado', 
-                category: 'comida', 
-                price: 2.49, 
-                emoji: '🍦'
-            },
-            { 
-                id: 9, 
-                name: 'Sticker Perro', 
-                category: 'animales', 
-                price: 2.49, 
-                emoji: '🐶'
-            },
-            { 
-                id: 10, 
-                name: 'Sticker Montaña', 
-                category: 'viajes', 
-                price: 2.99, 
-                emoji: '⛰️'
-            },
-            { 
-                id: 11, 
-                name: 'Sticker Teléfono', 
-                category: 'tech', 
-                price: 2.99, 
-                emoji: '📱'
-            },
-            { 
-                id: 12, 
-                name: 'Sticker Hamburguesa', 
-                category: 'comida', 
-                price: 2.49, 
-                emoji: '🍔'
-            }
+            { id: 1, name: 'Sticker Zorro', category: 'animales', price: 5.00, image: 'assets/images/zorro.png' },
+            { id: 2, name: 'Sticker tocó apechugar', category: 'animales', price: 5.00, image: 'assets/images/apechugar.png' },
+            { id: 3, name: 'Sticker Código', category: 'tech', price: 2.99, emoji: '💻' },
+            { id: 4, name: 'Sticker Pizza', category: 'comida', price: 1.99, emoji: '🍕' },
+            { id: 5, name: 'Sticker Gato', category: 'animales', price: 2.49, emoji: '🐱' },
+            { id: 6, name: 'Sticker Mapa Mundi', category: 'viajes', price: 3.49, emoji: '🗺️' },
+            { id: 7, name: 'Sticker Robot', category: 'tech', price: 3.99, emoji: '🤖' },
+            { id: 8, name: 'Sticker Helado', category: 'comida', price: 2.49, emoji: '🍦' },
+            { id: 9, name: 'Sticker Perro', category: 'animales', price: 2.49, emoji: '🐶' },
+            { id: 10, name: 'Sticker Montaña', category: 'viajes', price: 2.99, emoji: '⛰️' },
+            { id: 11, name: 'Sticker Teléfono', category: 'tech', price: 2.99, emoji: '📱' },
+            { id: 12, name: 'Sticker Hamburguesa', category: 'comida', price: 2.49, emoji: '🍔' }
         ];
 
-        // Inicializar la tienda
         window.addEventListener('DOMContentLoaded', () => {
             initializeShop(PRODUCTS_USD, CURRENCY);
         });
