@@ -6,7 +6,7 @@
     <title>PajarraCO - Tienda de Stickers</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-whatsapp-phone="56975297791">
     <header>
         <nav>
             <a href="#" class="logo">
@@ -76,10 +76,12 @@
                     <span id="total">$0</span>
                 </div>
             </div>
-            <button class="checkout-btn" id="checkoutBtn">Finalizar Compra</button>
+            <p class="checkout-note">El pedido se envía por WhatsApp. El pago se coordina por transferencia; este sitio no procesa pagos automáticos.</p>
+            <button class="checkout-btn" id="checkoutBtn">Pedir por WhatsApp</button>
         </div>
     </div>
 
+    <script src="shop.js"></script>
     <script>
         // Tasas de conversión (ejemplo - actualizar según sea necesario)
         const exchangeRate = {
@@ -410,11 +412,22 @@
 
             const subtotal = cart.reduce((sum, item) => sum + (convertPrice(item.price) * item.quantity), 0);
             const total = subtotal + convertPrice(500);
-            const items = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
+            const totalText = currentCurrency === 'clp' ? total.toString() : total.toFixed(2);
+            const message = [
+                '¡Hola Cony y Robert! 🐦 Me gustaría hacer el siguiente pedido en PajarraCO:',
+                '',
+                ...cart.map(item =>
+                    `▪️ ${item.quantity}x ${item.name} (${getCurrencySymbol()}${formatPrice(item.price)} c/u)`
+                ),
+                '',
+                `📦 Envío: ${getCurrencySymbol()}${formatPrice(convertPrice(500))}`,
+                `💰 Total a pagar: ${getCurrencySymbol()}${totalText}`,
+                '',
+                'Quisiera coordinar el pago por transferencia. Por favor, envíenme los datos para pagar. ¡Gracias!'
+            ].join('\n');
 
-            let totalText = currentCurrency === 'clp' ? total : total.toFixed(2);
-            alert(`¡Gracias por tu compra!\n\nProductos: ${items}\n\nTotal: ${getCurrencySymbol()}${totalText}\n\nEste es un carrito de demostración.`);
-            
+            if (!openWhatsAppOrder(message)) return;
+
             cart = [];
             saveCartToStorage();
             updateCartCount();

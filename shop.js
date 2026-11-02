@@ -247,39 +247,34 @@ class PajarracoShop {
     }
 
     /**
-     * Finalizar compra
+     * Enviar el pedido por WhatsApp para coordinar el pago manual
      */
     checkout() {
-    if (this.cart.length === 0) return;
+        if (this.cart.length === 0) return;
 
-    // 1. Calcular el total
-    const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + this.currency.shippingCost;
+        const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = subtotal + this.currency.shippingCost;
+        const message = [
+            '¡Hola Cony y Robert! 🐦 Me gustaría hacer el siguiente pedido en PajarraCO:',
+            '',
+            ...this.cart.map(item =>
+                `▪️ ${item.quantity}x ${item.name} (${this.currency.symbol}${this.formatPrice(item.price)})`
+            ),
+            '',
+            `📦 Envío: ${this.currency.symbol}${this.formatPrice(this.currency.shippingCost)}`,
+            `💰 Total a pagar: ${this.currency.symbol}${this.formatPrice(total)}`,
+            '',
+            'Quisiera coordinar el pago por transferencia. Por favor, envíenme los datos para pagar. ¡Gracias!'
+        ].join('\n');
 
-    // 2. Armar el texto del mensaje con formato amigable
-    let mensaje = "¡Hola Cony y Robert! 🐦 Me gustaría hacer el siguiente pedido en PajarraCO:%0A%0A";
-    
-    this.cart.forEach(item => {
-        mensaje += `▪️ ${item.quantity}x ${item.name} (${this.currency.symbol}${this.formatPrice(item.price)})%0A`;
-    });
-    
-    mensaje += `%0A📦 *Envío:* ${this.currency.symbol}${this.formatPrice(this.currency.shippingCost)}%0A`;
-    mensaje += `💰 *Total a pagar:* ${this.currency.symbol}${this.formatPrice(total)}%0A%0A`;
-    mensaje += `Por favor indíquenme los datos de transferencia. ¡Gracias!`;
+        if (!openWhatsAppOrder(message)) return;
 
-    // 3. Configurar tu número de teléfono (Reemplaza las X con tu número real, incluyendo el 56 de Chile)
-    const telefonoPajarraco = "569XXXXXXXX"; 
-    const urlWhatsApp = `https://wa.me/${telefonoPajarraco}?text=${mensaje}`;
-
-    // 4. Vaciar el carrito y cerrar el modal
-    this.cart = [];
-    this.saveCartToStorage();
-    this.updateCartCount();
-    this.closeCart();
-    this.renderCart();
-
-    // 5. Abrir WhatsApp en una nueva pestaña
-    window.open(urlWhatsApp, '_blank');
-}
+        this.cart = [];
+        this.saveCartToStorage();
+        this.updateCartCount();
+        this.closeCart();
+        this.renderCart();
+    }
 
     /**
      * Guardar carrito en localStorage
@@ -310,4 +305,25 @@ class PajarracoShop {
  */
 function initializeShop(products, currency) {
     new PajarracoShop(products, currency);
+}
+
+function openWhatsAppOrder(message) {
+    const phone = document.body.dataset.whatsappPhone;
+    if (!phone || !/^\d+$/.test(phone)) {
+        console.error('Configura un número de WhatsApp válido en data-whatsapp-phone.');
+        alert('No se pudo iniciar el pedido. Inténtalo más tarde.');
+        return false;
+    }
+
+    const whatsappWindow = window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+        '_blank'
+    );
+    if (!whatsappWindow) {
+        alert('No se pudo abrir WhatsApp. Permite las ventanas emergentes para continuar; tu carrito se conservó.');
+        return false;
+    }
+
+    whatsappWindow.opener = null;
+    return true;
 }
