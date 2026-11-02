@@ -16,6 +16,11 @@ class PajarracoShop {
         this.cartModal = document.getElementById('cartModal');
         this.closeCartBtn = document.getElementById('closeCart');
         this.checkoutBtn = document.getElementById('checkoutBtn');
+        this.customerNameInput = document.getElementById('customerName');
+        this.deliveryMethodSelect = document.getElementById('deliveryMethod');
+        this.courierAddressGroup = document.getElementById('courierAddressGroup');
+        this.courierAddressInput = document.getElementById('courierAddress');
+        this.deliveryNotesInput = document.getElementById('deliveryNotes');
         this.filterBtns = document.querySelectorAll('.filter-btn');
         
         this.init();
@@ -51,6 +56,13 @@ class PajarracoShop {
         });
 
         this.checkoutBtn.addEventListener('click', () => this.checkout());
+        this.deliveryMethodSelect.addEventListener('change', () => {
+            this.updateDeliveryFields();
+            this.updateCartTotals();
+        });
+        this.customerNameInput.addEventListener('input', () => this.customerNameInput.setCustomValidity(''));
+        this.courierAddressInput.addEventListener('input', () => this.courierAddressInput.setCustomValidity(''));
+        this.updateDeliveryFields();
     }
 
     /**
@@ -238,12 +250,31 @@ class PajarracoShop {
      */
     updateCartTotals() {
         const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = this.cart.length > 0 ? this.currency.shippingCost : 0;
-        const total = subtotal + shipping;
+        const deliveryMethod = this.deliveryMethodSelect.value;
+        const freeDelivery = ['pickup', 'vitacura', 'conchali', 'san-joaquin'].includes(deliveryMethod);
+        const shippingText = !this.cart.length
+            ? `${this.currency.symbol}${this.formatPrice(0)}`
+            : freeDelivery
+                ? `${this.currency.symbol}${this.formatPrice(0)}`
+                : deliveryMethod === 'courier'
+                    ? 'Por cotizar'
+                    : 'A coordinar';
+        const totalText = !this.cart.length
+            ? `${this.currency.symbol}${this.formatPrice(0)}`
+            : freeDelivery
+                ? `${this.currency.symbol}${this.formatPrice(subtotal)}`
+                : 'Por confirmar';
 
         document.getElementById('subtotal').textContent = `${this.currency.symbol}${this.formatPrice(subtotal)}`;
-        document.getElementById('shipping').textContent = `${this.currency.symbol}${this.formatPrice(shipping)}`;
-        document.getElementById('total').textContent = `${this.currency.symbol}${this.formatPrice(total)}`;
+        document.getElementById('shipping').textContent = shippingText;
+        document.getElementById('total').textContent = totalText;
+    }
+
+    updateDeliveryFields() {
+        const isCourier = this.deliveryMethodSelect.value === 'courier';
+        this.courierAddressGroup.hidden = !isCourier;
+        this.courierAddressInput.required = isCourier;
+        if (!isCourier) this.courierAddressInput.setCustomValidity('');
     }
 
     /**
@@ -252,23 +283,48 @@ class PajarracoShop {
     checkout() {
         if (this.cart.length === 0) return;
 
+        this.customerNameInput.setCustomValidity(
+            this.customerNameInput.value.trim() ? '' : 'Ingresa tu nombre y apellido.'
+        );
+        if (!this.customerNameInput.reportValidity() || !this.deliveryMethodSelect.reportValidity()) return;
+
+        const deliveryMethod = this.deliveryMethodSelect.value;
+        const isCourier = deliveryMethod === 'courier';
+        if (isCourier) {
+            this.courierAddressInput.setCustomValidity(
+                this.courierAddressInput.value.trim() ? '' : 'Ingresa la comuna y dirección de destino.'
+            );
+            if (!this.courierAddressInput.reportValidity()) return;
+        }
+
         const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const total = subtotal + this.currency.shippingCost;
+        const total = this.formatPrice(subtotal);
+        const deliveryLabel = this.deliveryMethodSelect.options[this.deliveryMethodSelect.selectedIndex].textContent;
         const message = [
             '¡Hola Cony y Robert! 🐦 Me gustaría hacer el siguiente pedido en PajarraCO:',
+            `Nombre: ${this.customerNameInput.value.trim()}`,
             '',
             ...this.cart.map(item =>
                 `▪️ ${item.quantity}x ${item.name} (${this.currency.symbol}${this.formatPrice(item.price)})`
             ),
             '',
-            `📦 Envío: ${this.currency.symbol}${this.formatPrice(this.currency.shippingCost)}`,
-            `💰 Total a pagar: ${this.currency.symbol}${this.formatPrice(total)}`,
+            `📦 Entrega: ${deliveryLabel}`,
+            ...(isCourier ? [`Dirección: ${this.courierAddressInput.value.trim()}`] : []),
+            ...(this.deliveryNotesInput.value.trim() ? [`Indicaciones: ${this.deliveryNotesInput.value.trim()}`] : []),
+            ...(isCourier
+                ? ['Costo de envío: por cotizar.', `Subtotal de productos: ${this.currency.symbol}${total}`, 'El total final se confirma después de cotizar el envío.']
+                : [`Envío: ${this.currency.symbol}${this.formatPrice(0)} (gratuito)`, `Total: ${this.currency.symbol}${total}`]),
             '',
             'Quisiera coordinar el pago por transferencia. Por favor, envíenme los datos para pagar. ¡Gracias!'
         ].join('\n');
 
         if (!openWhatsAppOrder(message)) return;
 
+        this.customerNameInput.value = '';
+        this.deliveryMethodSelect.value = '';
+        this.courierAddressInput.value = '';
+        this.deliveryNotesInput.value = '';
+        this.updateDeliveryFields();
         this.cart = [];
         this.saveCartToStorage();
         this.updateCartCount();

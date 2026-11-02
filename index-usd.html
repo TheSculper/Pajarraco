@@ -41,6 +41,35 @@
         <div class="products-grid" id="productsGrid">
             <!-- Los productos se cargarán aquí con JavaScript -->
         </div>
+
+        <section class="store-info" aria-labelledby="storeInfoTitle">
+            <h2 id="storeInfoTitle">Entrega y compra</h2>
+            <div class="store-info-grid">
+                <article>
+                    <h3>Retiro y entregas gratuitas</h3>
+                    <ul>
+                        <li>Retiro en Pacem in Terris 1783, Vitacura.</li>
+                        <li>Punto de encuentro cercano a Vitacura.</li>
+                        <li>Metro Conchalí.</li>
+                        <li>Cerca del Campus San Joaquín.</li>
+                    </ul>
+                    <p>La fecha y el horario se coordinan por WhatsApp.</p>
+                </article>
+                <article>
+                    <h3>Despachos a otras zonas</h3>
+                    <p>Podemos coordinar Starken, Chilexpress u otro medio. El costo se cotiza según el servicio y se confirma contigo por WhatsApp antes de cerrar el pedido.</p>
+                </article>
+                <article>
+                    <h3>Disponibilidad y pago</h3>
+                    <p>Hay stock disponible y los pedidos se preparan de inmediato. El pago se coordina por transferencia; la página no procesa pagos automáticos.</p>
+                    <p><a href="https://wa.me/56975297791">Consulta por WhatsApp</a></p>
+                </article>
+                <article>
+                    <h3>Cambios y devoluciones</h3>
+                    <p>No se aceptan devoluciones por cambio de opinión. Si tu pedido llega con una falla, contáctanos por WhatsApp para revisar el caso. Se mantienen los derechos que correspondan según la ley vigente.</p>
+                </article>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -68,8 +97,30 @@
                     <span id="total">$0.00</span>
                 </div>
             </div>
+            <div class="checkout-fields">
+                <label for="customerName">Nombre y apellido</label>
+                <input id="customerName" type="text" autocomplete="name" maxlength="100" required>
+
+                <label for="deliveryMethod">¿Cómo prefieres recibir tu pedido?</label>
+                <select id="deliveryMethod" required>
+                    <option value="">Elige una opción</option>
+                    <option value="pickup">Retiro gratuito en Pacem in Terris 1783, Vitacura</option>
+                    <option value="vitacura">Entrega gratuita en un punto cercano a Vitacura</option>
+                    <option value="conchali">Entrega gratuita en Metro Conchalí</option>
+                    <option value="san-joaquin">Entrega gratuita cerca del Campus San Joaquín</option>
+                    <option value="courier">Despacho por Starken, Chilexpress u otro (costo por cotizar)</option>
+                </select>
+
+                <div id="courierAddressGroup" hidden>
+                    <label for="courierAddress">Comuna y dirección de destino</label>
+                    <textarea id="courierAddress" rows="2" maxlength="240" autocomplete="street-address"></textarea>
+                </div>
+
+                <label for="deliveryNotes">Preferencia de horario o indicaciones (opcional)</label>
+                <textarea id="deliveryNotes" rows="2" maxlength="300"></textarea>
+            </div>
             <p class="checkout-note">El pedido se envía por WhatsApp. El pago se coordina por transferencia; este sitio no procesa pagos automáticos.</p>
-            <button class="checkout-btn" id="checkoutBtn">Pedir por WhatsApp</button>
+            <button class="checkout-btn" id="checkoutBtn" type="button">Pedir por WhatsApp</button>
         </div>
     </div>
 
@@ -78,7 +129,6 @@
         const CURRENCY = {
             symbol: '$',
             name: 'USD',
-            shippingCost: 5.00,
             storageKey: 'pajarracoCart-usd'
         };
 
